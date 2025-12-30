@@ -1,9 +1,13 @@
+import tableContainerStyles from "../styles/table-container.js";
+import TableViews from "./table-views.js";
+
 class TableContainer extends HTMLElement {
-  static observedAttributes = ["view", "page", "columns"];
+  static observedAttributes = ["data-view", "data-page", "data-columns"];
 
   constructor() {
     super();
     this.initialized = false;
+    document.adoptedStyleSheets = [tableContainerStyles];
   }
 
   /* _____      _ _ _                _        
@@ -17,9 +21,12 @@ class TableContainer extends HTMLElement {
   connectedCallback() {
     if (!this._initialized) {
       this._initialized = true;
-      this._syncWithURLParams();
-      this._setupEventListeners();
-      this._renderSkeleton();
+
+      this._waitForChildren().then(() => {
+        this._syncWithURLParams();
+        this._setupEventListeners();
+        this._renderSkeleton();
+      });
     }
   }
 
@@ -41,6 +48,21 @@ class TableContainer extends HTMLElement {
     }
   }
 
+  /*_____       _     _ _      
+   |  __ \     | |   | (_)     
+   | |__) |   _| |__ | |_  ___ 
+   |  ___/ | | | '_ \| | |/ __|
+   | |   | |_| | |_) | | | (__ 
+   |_|    \__,_|_.__/|_|_|\___|                           
+  */
+
+  setContent(node) {
+    const wrapper = this.querySelector("table-wrapper");
+    if (!wrapper) return;
+
+    wrapper.replaceChildren(node);
+  }
+
   /*_____      _            _       
    |  __ \    (_)          | |      
    | |__) | __ ___   ____ _| |_ ___ 
@@ -48,6 +70,19 @@ class TableContainer extends HTMLElement {
    | |   | |  | |\ V / (_| | ||  __/
    |_|   |_|  |_| \_/ \__,_|\__\___|                                
   */
+
+  _waitForChildren() {
+    return new Promise((resolve) => {
+      const check = () => {
+        if (this.children.length > 0) {
+          resolve();
+        } else {
+          requestAnimationFrame(check);
+        }
+      };
+      check();
+    });
+  }
 
   _syncWithURLParams() {
     const params = new URLSearchParams(window.location.search);
@@ -135,8 +170,7 @@ class TableContainer extends HTMLElement {
     const columns = parseInt(this.dataset.columns) || 3;
     const skeleton = this._createSkeletonLoader(columns);
 
-    wrapper.innerHTML = "";
-    wrapper.appendChild(skeleton);
+    wrapper.replaceChildren(skeleton);
   }
 
   _createSkeletonLoader(columns) {
@@ -148,9 +182,6 @@ class TableContainer extends HTMLElement {
 
     for (let i = 0; i < columns; i++) {
       const th = document.createElement("th");
-      const skeleton = document.createElement("div");
-      skeleton.className = "skeleton-item skeleton-header";
-      th.appendChild(skeleton);
       headerRow.appendChild(th);
     }
     thead.appendChild(headerRow);
@@ -161,9 +192,6 @@ class TableContainer extends HTMLElement {
       const row = document.createElement("tr");
       for (let j = 0; j < columns; j++) {
         const td = document.createElement("td");
-        const skeleton = document.createElement("div");
-        skeleton.className = "skeleton-item skeleton-cell";
-        td.appendChild(skeleton);
         row.appendChild(td);
       }
       tbody.appendChild(row);
@@ -181,14 +209,6 @@ class TableContainer extends HTMLElement {
                  | |                  
                  |_|                  
   */
-
-  setContent(node) {
-    const wrapper = this.querySelector("table-wrapper");
-    if (!wrapper) return;
-
-    wrapper.innerHTML = "";
-    wrapper.appendChild(node);
-  }
 
   getView() {
     return this.dataset.view;
@@ -209,4 +229,14 @@ class TableContainer extends HTMLElement {
 
 customElements.define("table-container", TableContainer);
 
-export default TableContainer;
+/*_____       _      _____                                             _       
+ / ____|     | |    / ____|                                           | |      
+| (___  _   _| |__ | |     ___  _ __ ___  _ __   ___  _ __   ___ _ __ | |_ ___ 
+ \___ \| | | | '_ \| |    / _ \| '_ ` _ \| '_ \ / _ \| '_ \ / _ \ '_ \| __/ __|
+ ____) | |_| | |_) | |___| (_) | | | | | | |_) | (_) | | | |  __/ | | | |_\__ \
+|_____/ \__,_|_.__/ \_____\___/|_| |_| |_| .__/ \___/|_| |_|\___|_| |_|\__|___/
+                                         | |                                   
+                                         |_|                                   
+ */
+
+customElements.define("table-views", TableViews)

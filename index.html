@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="module" src="./src/components/table-container.js"></script>
+        <script type="module" src="./src/components/table-views.js"></script>
+    </head>
+  <body>
+    <table-container
+      data-view="[view_id]"
+      data-page="[page_id]"
+      data-columns="[column_amount]"
+    >
+      <table-tools class="authorized treasury">
+        <table-views>
+          <datalist>
+            <option value="transactions" data-columns="7">Movimientos</option>
+            <option value="monthly" data-columns="6">Resumen Mensual</option>
+            <option value="yearly" data-columns="7">Resumen Anual</option>
+          </datalist>
+        </table-views>
+        <button-group>
+          <button
+            id="new-outgoing"
+            class="small neutral"
+            data-display_icon="output_circle"
+          >
+            <span>Registrar Gasto</span>
+          </button>
+          <button
+            id="new-incoming"
+            class="small primary"
+            data-display_icon="input_circle"
+          >
+            <span>Registrar Ingreso</span>
+          </button>
+        </button-group>
+      </table-tools>
+      <table-wrapper>
+        <table></table>
+      </table-wrapper>
+      <table-pagination>
+        <datalist>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+        </datalist>
+      </table-pagination>
+    </table-container>
+  </body>
+</html>
