@@ -1,1 +1,1 @@
-# Get it from [jsDelivr](cdn.jsdelivr.net/gh/WardoPo/table-container/components/table-container.js)
+# Get it from [jsDelivr](https://cdn.jsdelivr.net/gh/WardoPo/table-container/src/components/table-container.js)
