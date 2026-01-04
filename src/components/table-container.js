@@ -8,7 +8,7 @@ class TableContainer extends HTMLElement {
   constructor() {
     super();
     this.initialized = false;
-    document.adoptedStyleSheets = [tableContainerStyles];
+    document.adoptedStyleSheets.push(tableContainerStyles);
   }
 
   /* _____      _ _ _                _        

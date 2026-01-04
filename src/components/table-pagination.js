@@ -5,7 +5,7 @@ class TablePagination extends HTMLElement {
 
   constructor() {
     super();
-    document.adoptedStyleSheets = [tablePaginationStyles];
+    document.adoptedStyleSheets.push(tablePaginationStyles);
     this.attachShadow({ mode: "open" });
     this._container = document.createElement("nav");
     this.shadowRoot.append(this._container);
@@ -26,6 +26,14 @@ class TablePagination extends HTMLElement {
       console.warn("table-pagination must be inside table-container");
       return;
     }
+
+    this._loadPagesFromDatalist();
+    if (this._pages.length <= 1) {
+      this.style.display = "none";
+      return;
+    }
+
+    this._render();
     this._syncFromParent();
   }
 
@@ -63,6 +71,17 @@ class TablePagination extends HTMLElement {
    | |   | |  | |\ V / (_| | ||  __/
    |_|   |_|  |_| \_/ \__,_|\__\___|                                
   */
+
+  _loadPagesFromDatalist() {
+    const datalist = this.querySelector("datalist");
+    if (!datalist) return;
+
+    this._pages = Array.from(datalist.options).map((opt) => ({
+      name: opt.textContent.trim(),
+      value: opt.value,
+    }));
+  }
+
   _syncFromParent() {
     const page = this.parentContainer.getAttribute("data-page");
     if (page != null) {
