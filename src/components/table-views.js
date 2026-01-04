@@ -1,6 +1,9 @@
+import tableViewsStyles from "../styles/table-views.js";
+
 class TableViews extends HTMLElement {
   constructor() {
     super();
+    document.adoptedStyleSheets = [tableContainerStyles];
     this.attachShadow({ mode: "open" });
 
     this._views = [];
@@ -79,55 +82,15 @@ class TableViews extends HTMLElement {
 
   _render() {
     this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-        }
-
-        .labels {
-          display: flex;
-          gap: 8px;
-        }
-
-        button {
-          border: none;
-          background: none;
-          padding: 4px 8px;
-          cursor: pointer;
-          opacity: 0.6;
-        }
-
-        button.active {
-          opacity: 1;
-          font-weight: 600;
-        }
-
-        select {
-          width: 100%;
-        }
-
-        @media (max-width: 768px) {
-          .labels {
-            display: none;
-          }
-        }
-
-        @media (min-width: 769px) {
-          select {
-            display: none;
-          }
-        }
-      </style>
-
       <div class="labels">
         ${this._views
           .map(
-            (v) => `
+            (view) => `
           <button
-            data-value="${v.value}"
-            class="${v.value === this._currentView ? "active" : ""}"
+            data-value="${view.value}"
+            class="${view.value === this._currentView ? "active" : ""}"
           >
-            ${v.name}
+            ${view.name}
           </button>
         `
           )
@@ -137,11 +100,11 @@ class TableViews extends HTMLElement {
       <select>
         ${this._views
           .map(
-            (v) => `
-          <option value="${v.value}" ${
-              v.value === this._currentView ? "selected" : ""
+            (view) => `
+          <option value="${view.value}" ${
+              view.value === this._currentView ? "selected" : ""
             }>
-            ${v.name}
+            ${view.name}
           </option>
         `
           )
