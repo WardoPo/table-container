@@ -3,7 +3,7 @@ import tableViewsStyles from "../styles/table-views.js";
 class TableViews extends HTMLElement {
   constructor() {
     super();
-    document.adoptedStyleSheets = [tableContainerStyles];
+    document.adoptedStyleSheets = [tableViewsStyles];
     this.attachShadow({ mode: "open" });
 
     this._views = [];
@@ -23,7 +23,10 @@ class TableViews extends HTMLElement {
 
   connectedCallback() {
     this.parentContainer = this.closest("table-container");
-    if (!this.parentContainer) return;
+    if (!this.parentContainer){
+      console.warn("table-views must be inside table-container");
+      return;
+    }
 
     this._loadViewsFromDatalist();
     if (this._views.length <= 1) {

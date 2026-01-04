@@ -1,5 +1,6 @@
 import tableContainerStyles from "../styles/table-container.js";
 import TableViews from "./table-views.js";
+import TablePagination from "./table-pagination.js";
 
 class TableContainer extends HTMLElement {
   static observedAttributes = ["data-view", "data-page", "data-columns"];
@@ -240,3 +241,4 @@ customElements.define("table-container", TableContainer);
  */
 
 customElements.define("table-views", TableViews)
+customElements.define("table-pagination", TablePagination)
