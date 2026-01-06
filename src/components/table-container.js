@@ -128,8 +128,6 @@ class TableContainer extends HTMLElement {
   }
 
   _handleViewChange(oldView, newView) {
-    // Remove page when view changes
-    delete this.dataset.page;
 
     this._updateURLParams();
     this._renderSkeleton();
