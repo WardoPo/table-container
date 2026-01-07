@@ -3,9 +3,9 @@ import tableViewsStyles from "../styles/table-views.js";
 class TableViews extends HTMLElement {
   constructor() {
     super();
-    document.adoptedStyleSheets.push(tableViewsStyles);
     this.attachShadow({ mode: "open" });
-
+    this.shadowRoot.adoptedStyleSheets.push(tableViewsStyles);
+    
     this._views = [];
     this._currentView = null;
 
