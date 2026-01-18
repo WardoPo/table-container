@@ -8,6 +8,7 @@ class TablePagination extends HTMLElement {
     document.adoptedStyleSheets.push(tablePaginationStyles);
     this.attachShadow({ mode: "open" });
     this._container = document.createElement("nav");
+    this._container.part.add("pagination-list")
     this.shadowRoot.append(this._container);
   }
 
@@ -33,8 +34,8 @@ class TablePagination extends HTMLElement {
       return;
     }
 
-    this._render();
     this._syncFromParent();
+    this._render();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -94,16 +95,23 @@ class TablePagination extends HTMLElement {
 
     if (!this._pages.length) return;
 
-    const currentPage = this.getAttribute("data-page");
+    const previousButton = document.createElement("button")
+    previousButton.type = "button"
+    previousButton.part.add("button","pagination-previous")
+    previousButton.disabled = this._getCurrenPageIndex() == 0
+    previousButton.addEventListener("click", () => this._setPage(this._pages[this._getCurrenPageIndex() - 1].value))
+
+    this._container.append(previousButton)
 
     this._pages.forEach(({ name, value }) => {
       const button = document.createElement("button");
       button.type = "button";
       button.textContent = name;
       button.dataset.page = value;
+      button.part.add("button");
 
-      if (String(value) === String(currentPage)) {
-        button.setAttribute("aria-current", "page");
+      if (String(value) === String(this.dataset.page)) {
+        button.part.add("active")
       }
 
       button.addEventListener("click", () => {
@@ -112,6 +120,15 @@ class TablePagination extends HTMLElement {
 
       this._container.append(button);
     });
+
+
+    const nextButton = document.createElement("button")
+    nextButton.type = "button"
+    nextButton.part.add("button","pagination-next")
+    nextButton.disabled = this._getCurrenPageIndex() == this._pages.length - 1
+    nextButton.addEventListener("click", () => this._setPage(this._pages[this._getCurrenPageIndex() + 1].value))
+
+    this._container.append(nextButton)
   }
 
   _setPage(value) {
@@ -122,11 +139,23 @@ class TablePagination extends HTMLElement {
   _updateActive(value) {
     [...this._container.children].forEach((button) => {
       if (button.dataset.page === String(value)) {
-        button.setAttribute("aria-current", "page");
+        button.part.add("active");
       } else {
-        button.removeAttribute("aria-current");
+        button.part.remove("active")
       }
     });
+
+    const newIndex = this._pages.findIndex(({ value: v }) => String(v) === String(value));
+    const previousButton = this._container.querySelector('[part~="pagination-previous"]');
+    const nextButton = this._container.querySelector('[part~="pagination-next"]');
+
+    if (previousButton) previousButton.disabled = newIndex === 0;
+    if (nextButton) nextButton.disabled = newIndex === this._pages.length - 1;
+  }
+
+  _getCurrenPageIndex() {
+    const current = String(this.getAttribute("data-page"));
+    return this._pages.findIndex(({ value }) => String(value) == current)
   }
 }
 
