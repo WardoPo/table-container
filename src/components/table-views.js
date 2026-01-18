@@ -90,9 +90,8 @@ class TableViews extends HTMLElement {
           .map(
             (view) => `
           <button
-            part="button"
+            part="button ${view.value === this._currentView ? "active" : ""}"
             data-value="${view.value}"
-            class="${view.value === this._currentView ? "active" : ""}"
           >
             ${view.name}
           </button>
